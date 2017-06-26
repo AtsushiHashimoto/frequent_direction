@@ -5,8 +5,17 @@ memory efficient spectral embedding
     % pip install git+https://github.com/AtsushiHashimoto/spectral_embedding4large_scale_matrix.git
 
 # examples
-1. [source code is here](./examples/test_embedding.py)
-2. how to execute
+1. short instruction
+```
+from spectral_embedding_with_frequent_direction import spectral_embedding
+...
+# use_matrix_sketch = True for reduce memory consumption, otherwise it works as that of sklearn.
+W_embedded = spectral_embedding(W, n_components=n_components, eigen_solver='arpack',\
+                       random_state=None, eigen_tol=0.0,\
+                       norm_laplacian=True, drop_first=True, use_matrix_sketch=True) 
+```
+2. [source code is here](./examples/test_embedding.py)
+3. how to execute
 ```
     % pip install psutil
     % pip install memory_profiler
