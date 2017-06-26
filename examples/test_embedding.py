@@ -4,8 +4,6 @@ import time
 from numpy.random import *
 from sklearn.metrics.pairwise import pairwise_kernels
 
-import sys
-sys.path.append("../")
 from spectral_embedding_with_frequent_direction import spectral_embedding
 
 rand_mat = rand(10000,100)
