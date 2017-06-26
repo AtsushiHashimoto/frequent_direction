@@ -5,9 +5,8 @@ memory efficient spectral embedding
     % pip install git+https://github.com/AtsushiHashimoto/spectral_embedding4large_scale_matrix.git
 
 # examples
-- [source code is here](./examples/test_embedding.py)    
-
-- how to execute
+1. [source code is here](./examples/test_embedding.py)
+2. how to execute
 ```
     % pip install psutil
     % pip install memory_profiler
