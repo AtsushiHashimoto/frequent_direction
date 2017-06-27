@@ -32,22 +32,21 @@ class FrequentDirection:
     def initialize(self,row):
         self.M = len(row)
         # Input error handling
-        if math.floor(ell / 2) >= self.M:
+        if math.floor(self.ell / 2) >= self.M:
             raise ValueError('Error: ell must be smaller than M * 2')
         self.N = 0
         # initialize output matrix B
-        self.mat_b = np.zeros([ell, self.M])
+        self.mat_b = np.zeros([self.ell, self.M])
         # compute zero valued row list
         self.zero_rows = np.nonzero([round(s, 7) == 0.0 for s in np.sum(self.mat_b, axis = 1)])[0].tolist()
         return
-
-    def wrapup(self):
-        finalize()
-        return self.mat_b
-
-    def finalize(self):
-        if ell >= self.N:
+    def get_result(self,initialize=False):
+        if self.ell >= self.N:
             raise ValueError('Error: ell must not be greater than N')
+        result = self.mat_b
+        if initialize:
+            self.__init__(self.ell)
+        return result
 
     def add_sample(self,row):
         if not self.is_initialized():
@@ -57,13 +56,13 @@ class FrequentDirection:
         i = self.N
 
         # insert a row into matrix B
-        mat_b[self.zero_rows[0], :] = row
+        self.mat_b[self.zero_rows[0], :] = row
 
         # remove zero valued row from the list
-        zero_rows.remove(zero_rows[0])
+        self.zero_rows.remove(self.zero_rows[0])
 
         # if there is no more zero valued row
-        if len(zero_rows) == 0:
+        if len(self.zero_rows) == 0:
 
             # compute SVD of matrix B
             mat_u, vec_sigma, mat_v = ln.svd(self.mat_b, full_matrices=False)
