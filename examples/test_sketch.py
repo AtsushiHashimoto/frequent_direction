@@ -1,37 +1,31 @@
 # -*- coding: utf-8 -*-
 import time
-import memory_profiler
 
 from numpy.random import *
-from frequent_direction import FrequentDirection
+from frequent_direction import FrequentDirection, calculateError, squaredFrobeniusNorm
 
-
-@profile
-def __main__():
-
-    rand_mat = rand(1000,100)
-    fd = FrequentDirection(20)
-
-    start = time.time()
-    print("trial start for %s"%eigen_solver)
-
-    W_embedded = spectral_embedding(W, n_components=n_components, eigen_solver=eigen_solver,
-                       random_state=None, eigen_tol=0.0,
-                       norm_laplacian=True, drop_first=True, use_matrix_sketch=use_matrix_sketch)
-    elapsed_time = time.time() - start
-    print ("elapsed_time:{0}".format(elapsed_time) + "[sec]")
-    print(W_embedded.shape)
-    return W_embedded
 
 @profile
 def main():
-    W_embedded = trial(W,100,'arpack',use_matrix_sketch=True) # spectral_embedding by frequent_direction
-    print(W_embedded)
 
-    #W_embedded = trial(W,100,'amg') # brute force 1
-    #print(W_embedded)
+    mat_rand = rand(1000,256) # 256 dimensional 1000 samples
+    mat_rand = mat_rand.T # transpose for SVD
+    fd = FrequentDirection(32) # compress to 32 dimensional samples
 
-    W_embedded = trial(W,100,'arpack',use_matrix_sketch=False) # brute force 2
-    print(W_embedded)
+    start = time.time()
+    print("trial start")
+    for row in mat_rand:
+        fd.add_sample(row)
+    mat_sketch = fd.get_result()
+    elapsed_time = time.time() - start
+    print ("elapsed_time:{0}".format(elapsed_time) + "[sec]")
+    print("Original Matrix Shape:", mat_rand.shape)
+    print("Sketched Matrix Shape:", mat_sketch.shape)
+    error = calculateError(mat_rand,mat_sketch)
+    flobius_norm =  squaredFrobeniusNorm(mat_rand)
+    print("Error: %f"%error)
+    print("Error Upper bound: %f"%(flobius_norm*2))
 
-main()
+if __name__ == "__main__":
+    # execute only if run as a script
+    main()
