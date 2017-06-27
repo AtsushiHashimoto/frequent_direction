@@ -7,6 +7,13 @@ Implementation of Frequent-directions algorithm for efficient matrix sketching [
 % pip install git+https://github.com/AtsushiHashimoto/frequent_direction.git
 ```
 
+# Sample Code
+```
+% wget https://raw.githubusercontent.com/AtsushiHashimoto/frequent_direction/master/examples/test_sketch.py
+% pip install memory_profiler
+% python -m memory_profiler test_sketch.py
+```
+
 # Usage
 ```
 import frequent_direction
