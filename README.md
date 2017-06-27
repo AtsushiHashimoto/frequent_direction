@@ -1,35 +1,35 @@
-# spectral_embedding4large_scale_matrix
-memory efficient spectral embedding
+# frequent-direction
 
-# install
-    % pip install git+https://github.com/AtsushiHashimoto/spectral_embedding4large_scale_matrix.git
+Implementation of Frequent-directions algorithm for efficient matrix sketching [Liberty2013]_ .
 
-# examples
-1. [source code is here](./examples/test_embedding.py)
-2. how to execute
+# Install
 ```
-    % pip install psutil
-    % pip install memory_profiler
-    % python -m memory_profiler test_embedding.py
+% pip install git+https://github.com/AtsushiHashimoto/frequent_direction.git
 ```
 
-# result of a sample execution.
-with matrix sketch => 71.671 MiB for 10000x10000 graph laplacian
-without => 865.652 MiB
-
+# Usage
 ```
-Filename: test_embedding.py
+import frequent_direction
+import csv
 
-Line #    Mem usage    Increment   Line Contents
-================================================
-25  835.688 MiB    0.000 MiB   @profile
-26                             def main():
-27   71.691 MiB -763.996 MiB       W_embedded = trial(W,100,'arpack',use_matrix_sketch=True) # spectral_embedding by frequent_direction
-28   72.414 MiB    0.723 MiB       print(W_embedded)
-29                             
-30                                 #W_embedded = trial(W,100,'amg') # brute force 1
-31                                 #print(W_embedded)
-32                             
-33  865.652 MiB  793.238 MiB       W_embedded = trial(W,100,'arpack',use_matrix_sketch=False) # brute force 2
-34  865.664 MiB    0.012 MiB       print(W_embedded)
+ell = 20 # sketch an N x M as an N x ell mat.
+fd = frequent_direction(ell)
+with open("large_scale_matrix.csv","r") as fin:
+  reader = csv.reader(fin)
+  for row in reader:
+    fd.add_sample(row)
+
+mat_b = fd.get_result()
+print(mat_b.shape)
+print(mat_b)
 ```
+
+# License
+BSD 2-clause "Simplified" License
+
+# Original connected_nodes
+1. [codes by authors](https://github.com/edoliberty/frequent-directions)
+2. [codes by hido](https://github.com/hido/frequent-direction) <- this project is a rearrangement of this code.
+
+# Reference
+ [Liberty2013]  Edo. Liberty, "Simple and Deterministic Matrix Sketching", ACM SIGKDD, 2013. http://www.cs.yale.edu/homes/el327/papers/simpleMatrixSketching.pdf
