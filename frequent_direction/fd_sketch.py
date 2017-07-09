@@ -19,8 +19,13 @@ The original method has been introduced in [Liberty2013]_ .
 """
 
 class FrequentDirection:
-    def __init__(self,ell):
-        self.ell = ell
+    def __init__(self,ell, k=None):
+        self.ell = int(ell)
+        if k is None:
+            # the setting of original paper
+            self.k = 2 * ell + 1
+        else:
+            self.k = int(k)
         self.M = None
         self.N = 0
         self.mat_b = None
@@ -32,20 +37,24 @@ class FrequentDirection:
     def initialize(self,row):
         self.M = len(row)
         # Input error handling
-        if math.floor(self.ell / 2) >= self.M:
+        if self.ell >= self.M:
             raise ValueError('Error: ell must be smaller than M * 2')
         self.N = 0
         # initialize output matrix B
-        self.mat_b = np.zeros([self.ell, self.M])
-        # compute zero valued row list
-        self.zero_rows = np.nonzero([round(s, 7) == 0.0 for s in np.sum(self.mat_b, axis = 1)])[0].tolist()
+        self.mat_b = np.zeros([self.ell+self.k, self.M])
+
+        # set all rows as the initial list of zero value rows
+        self.zero_rows = list(range(self.ell + self.k))
         return
+
     def get_result(self,initialize=False):
-        if self.ell >= self.N:
-            raise ValueError('Error: ell must not be greater than N')
-        result = self.mat_b
+        if self.ell+self.k >= self.N:
+            raise ValueError('Error: ell + k must not be greater than N')
+
+        # cut off zero vectors
+        result = self.mat_b[:self.ell]
         if initialize:
-            self.__init__(self.ell)
+            self.__init__(self.ell, self.k)
         return result
 
     def add_sample(self,row):
@@ -58,7 +67,7 @@ class FrequentDirection:
         # insert a row into matrix B
         self.mat_b[self.zero_rows[0], :] = row
 
-        # remove zero valued row from the list
+        # remove the consumed row from the zero values row list
         self.zero_rows.remove(self.zero_rows[0])
 
         # if there is no more zero valued row
@@ -68,7 +77,7 @@ class FrequentDirection:
             mat_u, vec_sigma, mat_v = ln.svd(self.mat_b, full_matrices=False)
 
             # obtain squared singular value for threshold
-            squared_sv_center = vec_sigma[math.floor(self.ell / 2)] ** 2
+            squared_sv_center = vec_sigma[self.ell] ** 2
 
             # update sigma to shrink the row norms
             sigma_tilda = [(0.0 if d < 0.0 else math.sqrt(d)) for d in (vec_sigma ** 2 - squared_sv_center)]
