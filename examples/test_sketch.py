@@ -10,7 +10,7 @@ def main():
 
     mat_rand = rand(1000,256) # 256 dimensional 1000 samples
     mat_rand = mat_rand.T # transpose for SVD
-    fd = FrequentDirection(32) # compress to 32 dimensional samples
+    fd = FrequentDirection(64, 64) # compress to 32 dimensional samples
 
     start = time.time()
     print("trial start")
